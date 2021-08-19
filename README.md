@@ -4,7 +4,7 @@ This repository shows how you can write to Solace from Spark partitions. Here's 
 
 ![Spark to Solace architecture](/docs/architecture.png)
 
-[Line 64 in App.java](/src/main/java/App.java#L64) shows how you'd use row data in a Solace topic.
+[Line 71 in App.java](/src/main/java/App.java#L64) shows how you'd use row data in a Solace topic.
 
 ## Running the example
 
