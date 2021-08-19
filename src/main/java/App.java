@@ -15,8 +15,8 @@ import java.util.List;
 
 /**
  *
- * Spark—to-Solace
- * This app shows a Spark application writing to Solace. It opens one connection to Solace per partition.
+ * Spark—to-Solace This app shows a Spark application writing to Solace. It
+ * opens one connection to Solace per partition.
  *
  * Some helpful resources:
  *
@@ -45,34 +45,36 @@ public class App {
       final String username = "default";
       final String password = "default";
       final JCSMPProperties properties = new JCSMPProperties();
-      properties.setProperty(JCSMPProperties.HOST, hostName);     // host:port
-      properties.setProperty(JCSMPProperties.VPN_NAME,  vpnName); // message-vpn
+      properties.setProperty(JCSMPProperties.HOST, hostName); // host:port
+      properties.setProperty(JCSMPProperties.VPN_NAME, vpnName); // message-vpn
       properties.setProperty(JCSMPProperties.USERNAME, username); // client-username
       properties.setProperty(JCSMPProperties.PASSWORD, password); // client-password
       final JCSMPSession session = JCSMPFactory.onlyInstance().createSession(properties);
-      session.connect();  // session connected
+      session.connect(); // session connected
       XMLMessageProducer prod = session.getMessageProducer(new JCSMPStreamingPublishCorrelatingEventHandler() {
         @Override
         public void responseReceivedEx(Object o) {
           System.out.println("Producer received response for msg: " + o);
 
         }
+
         @Override
         public void handleErrorEx(Object o, JCSMPException e, long l) {
           System.out.println("Producer received response for msg: " + o);
         }
       });
 
-      // publish a message for each record in the partition using the partition's dedicated message producer
+      // publish a message for each record in the partition using the partition's
+      // dedicated message producer
       partitionOfRecords.forEachRemaining(val -> {
         // form dynamic Solace topic using values from Dataset row
-        final Topic topic = JCSMPFactory.onlyInstance().createTopic("root/customer/raw"); // include value in topic
+        final Topic topic = JCSMPFactory.onlyInstance().createTopic("root/" + val); // include value in topic
         // attach payload to Solace message object
         TextMessage msg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
         msg.setText(val);
         // publish message to Solace broker
         try {
-          prod.send(msg,topic);
+          prod.send(msg, topic);
         } catch (JCSMPException e) {
           e.printStackTrace();
         }
